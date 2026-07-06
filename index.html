@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Empire Tools & Hardware — Invoice</title>
+  <style>
+    :root {
+      --ink: #172018;
+      --muted: #657066;
+      --paper: #fffdf7;
+      --canvas: #e9ece6;
+      --line: #d9ddd5;
+      --brand: #163c2b;
+      --accent: #e9a825;
+      --danger: #a03b32;
+      --shadow: 0 24px 70px rgba(24, 37, 27, .14);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--canvas); font: 15px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    .appbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px max(20px, calc((100vw - 1100px)/2)); color: white; background: rgba(22, 60, 43, .97); backdrop-filter: blur(12px); box-shadow: 0 2px 18px rgba(0,0,0,.12); }
+    .appbar h1 { margin: 0; font: 700 17px/1.2 Georgia, serif; letter-spacing: .02em; }
+    .actions { display: flex; gap: 8px; }
+    .btn { border: 1px solid rgba(255,255,255,.28); border-radius: 9px; padding: 9px 14px; color: white; background: transparent; transition: .15s ease; }
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.1); }
+    .btn.primary { border-color: var(--accent); color: #1a241c; background: var(--accent); font-weight: 750; }
+    .workspace { max-width: 1100px; margin: 32px auto 80px; padding: 0 20px; }
+    .invoice { min-height: 1000px; padding: 54px 58px; border-top: 8px solid var(--brand); border-radius: 4px; background: var(--paper); box-shadow: var(--shadow); }
+    .header { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: start; padding-bottom: 28px; border-bottom: 2px solid var(--ink); }
+    .brand { display: flex; gap: 18px; align-items: center; }
+    .mark { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 50% 50% 44% 44%; color: var(--paper); background: var(--brand); font: 800 25px Georgia, serif; outline: 3px solid var(--accent); outline-offset: 3px; }
+    .company h2 { margin: 0 0 3px; font: 700 clamp(25px, 4vw, 36px)/1 Georgia, serif; letter-spacing: -.02em; }
+    .company p { margin: 5px 0 0; color: var(--muted); }
+    .invoice-title { text-align: right; }
+    .invoice-title h3 { margin: 0; color: var(--brand); font: 800 34px/1 Georgia, serif; letter-spacing: .08em; }
+    .invoice-title label { display: flex; align-items: center; gap: 8px; margin-top: 13px; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .invoice-title input { width: 130px; }
+    input, textarea { width: 100%; border: 1px solid transparent; border-bottom-color: var(--line); border-radius: 4px 4px 0 0; padding: 7px 8px; color: var(--ink); background: rgba(255,255,255,.35); outline: none; transition: .15s; }
+    input:hover, textarea:hover { background: #f5f4ee; }
+    input:focus, textarea:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(233,168,37,.14); }
+    .details { display: grid; grid-template-columns: 1.15fr .85fr; gap: 54px; margin: 34px 0 38px; }
+    .eyebrow { margin: 0 0 12px; color: var(--brand); font-size: 11px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
+    textarea { min-height: 86px; resize: vertical; }
+    .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 13px 18px; }
+    .field label { display: block; margin-bottom: 3px; color: var(--muted); font-size: 11px; font-weight: 750; text-transform: uppercase; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { padding: 11px 10px; color: white; background: var(--brand); font-size: 11px; letter-spacing: .1em; text-align: left; text-transform: uppercase; }
+    th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { text-align: right; }
+    td { padding: 7px 5px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    td:first-child { width: 36px; color: var(--muted); text-align: center; }
+    td:nth-child(2) { width: 90px; }
+    td:nth-child(3) { width: 125px; }
+    td:nth-child(4) { width: 125px; font-variant-numeric: tabular-nums; }
+    td:last-child { width: 36px; }
+    .money-wrap { position: relative; }
+    .money-wrap span { position: absolute; top: 7px; left: 8px; color: var(--muted); }
+    .money-wrap input { padding-left: 20px; text-align: right; }
+    .remove { width: 28px; height: 28px; border: 0; border-radius: 50%; color: var(--muted); background: transparent; font-size: 19px; }
+    .remove:hover { color: white; background: var(--danger); }
+    .add { margin-top: 12px; border: 1px solid var(--brand); border-radius: 8px; padding: 8px 13px; color: var(--brand); background: transparent; font-weight: 750; }
+    .summary-area { display: grid; grid-template-columns: 1fr 310px; gap: 60px; margin-top: 30px; align-items: start; }
+    .notes textarea { min-height: 110px; }
+    .summary { border-top: 2px solid var(--ink); padding-top: 9px; }
+    .sum-row { display: grid; grid-template-columns: 1fr auto; gap: 20px; padding: 8px 4px; color: var(--muted); }
+    .sum-row output { color: var(--ink); font-variant-numeric: tabular-nums; }
+    .tax-label { display: flex; gap: 4px; align-items: center; }
+    .tax-label input { width: 64px; padding: 2px 4px; text-align: right; }
+    .sum-row.total { margin-top: 4px; border-top: 1px solid var(--ink); padding-top: 14px; color: var(--ink); font: 800 20px Georgia, serif; }
+    .footer { display: flex; justify-content: space-between; gap: 24px; margin-top: 70px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    .status { position: fixed; right: 20px; bottom: 20px; border-radius: 999px; padding: 9px 14px; color: white; background: var(--brand); opacity: 0; transform: translateY(10px); transition: .2s; pointer-events: none; }
+    .status.show { opacity: 1; transform: none; }
+    @media (max-width: 720px) {
+      .appbar { align-items: flex-start; }
+      .appbar h1 { display: none; }
+      .workspace { margin-top: 16px; padding: 0 10px; }
+      .invoice { padding: 30px 20px; }
+      .header, .details, .summary-area { grid-template-columns: 1fr; gap: 24px; }
+      .invoice-title { text-align: left; }
+      .details { margin-top: 26px; }
+      .meta { grid-template-columns: 1fr; }
+      .summary { max-width: none; }
+    }
+    @media print {
+      @page { size: letter; margin: .35in; }
+      body { background: white; }
+      .appbar, .add, .remove, .status { display: none !important; }
+      .workspace { max-width: none; margin: 0; padding: 0; }
+      .invoice { min-height: 0; padding: 25px 30px; border-top-width: 5px; box-shadow: none; }
+      input, textarea { padding: 3px 2px; border-color: transparent; background: transparent !important; box-shadow: none !important; }
+      .header { padding-bottom: 18px; }
+      .details { margin: 22px 0; }
+      .footer { margin-top: 40px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="appbar">
+    <h1>Empire Invoice Studio</h1>
+    <div class="actions">
+      <button class="btn" id="newBtn" type="button">New invoice</button>
+      <button class="btn primary" id="printBtn" type="button">Print / Save PDF</button>
+    </div>
+  </nav>
+
+  <main class="workspace">
+    <article class="invoice">
+      <header class="header">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">E</div>
+          <div class="company">
+            <h2>Empire Tools & Hardware</h2>
+            <p>LLC · Built to keep the job moving.</p>
+            <p><input data-save="companyContact" aria-label="Company contact details" value="Phone · Email · Business address"></p>
+          </div>
+        </div>
+        <div class="invoice-title">
+          <h3>INVOICE</h3>
+          <label>Invoice # <input data-save="invoiceNumber" id="invoiceNumber"></label>
+        </div>
+      </header>
+
+      <section class="details">
+        <div>
+          <p class="eyebrow">Bill to</p>
+          <textarea data-save="billTo" aria-label="Customer name and address" placeholder="Customer name&#10;Street address&#10;City, State ZIP"></textarea>
+        </div>
+        <div class="meta">
+          <div class="field"><label for="date">Invoice date</label><input type="date" id="date" data-save="date"></div>
+          <div class="field"><label for="due">Due date</label><input type="date" id="due" data-save="due"></div>
+          <div class="field"><label for="workOrder">Work order</label><input id="workOrder" data-save="workOrder" placeholder="WO-0000"></div>
+          <div class="field"><label for="po">Purchase order</label><input id="po" data-save="po" placeholder="PO-0000"></div>
+          <div class="field" style="grid-column: 1/-1"><label for="supervisor">Supervisor</label><input id="supervisor" data-save="supervisor" placeholder="Name"></div>
+        </div>
+      </section>
+
+      <div class="table-wrap">
+        <table aria-label="Invoice items">
+          <thead><tr><th>#</th><th>Description</th><th>Qty</th><th>Unit price</th><th>Amount</th><th></th></tr></thead>
+          <tbody id="items"></tbody>
+        </table>
+      </div>
+      <button class="add" id="addBtn" type="button">+ Add line item</button>
+
+      <section class="summary-area">
+        <div class="notes">
+          <p class="eyebrow">Notes & payment terms</p>
+          <textarea data-save="notes" placeholder="Thank you for your business. Payment is due by the date above."></textarea>
+        </div>
+        <div class="summary">
+          <div class="sum-row"><span>Subtotal</span><output id="subtotal">$0.00</output></div>
+          <div class="sum-row"><span class="tax-label">Tax <input type="number" id="taxRate" data-save="taxRate" min="0" step="0.001" value="8.875" aria-label="Tax rate">%</span><output id="tax">$0.00</output></div>
+          <div class="sum-row total"><span>Total due</span><output id="total">$0.00</output></div>
+        </div>
+      </section>
+
+      <footer class="footer"><span>Empire Tools & Hardware LLC</span><span>Thank you for your business.</span></footer>
+    </article>
+  </main>
+  <div class="status" id="status" role="status">Saved</div>
+
+  <script>
+    const STORAGE_KEY = 'empire-invoice-v1';
+    const itemsEl = document.getElementById('items');
+    const money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    let state = { items: [] };
+
+    function freshState() {
+      const today = new Date();
+      const due = new Date(today); due.setDate(due.getDate() + 30);
+      return {
+        invoiceNumber: `INV-${today.getFullYear()}-${String(Date.now()).slice(-4)}`,
+        date: today.toISOString().slice(0, 10), due: due.toISOString().slice(0, 10),
+        taxRate: '8.875', companyContact: 'Phone · Email · Business address', billTo: '', workOrder: '', po: '', supervisor: '', notes: '',
+        items: Array.from({ length: 4 }, () => ({ description: '', qty: '1', price: '' }))
+      };
+    }
+
+    function load() {
+      try { state = { ...freshState(), ...JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') }; }
+      catch { state = freshState(); }
+      if (!state.items?.length) state.items = freshState().items;
+      document.querySelectorAll('[data-save]').forEach(el => el.value = state[el.dataset.save] ?? '');
+      renderItems(); calculate();
+    }
+
+    function save(show = true) {
+      document.querySelectorAll('[data-save]').forEach(el => state[el.dataset.save] = el.value);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (show) { const s = document.getElementById('status'); s.classList.add('show'); clearTimeout(save.timer); save.timer = setTimeout(() => s.classList.remove('show'), 900); }
+    }
+
+    function renderItems() {
+      itemsEl.innerHTML = '';
+      state.items.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${index + 1}</td><td><input class="desc" aria-label="Item ${index + 1} description" placeholder="Item or service"></td><td><input class="qty" type="number" min="0" step="1" aria-label="Item ${index + 1} quantity"></td><td><div class="money-wrap"><span>$</span><input class="price" type="number" min="0" step="0.01" aria-label="Item ${index + 1} unit price"></div></td><td class="amount">$0.00</td><td><button class="remove" type="button" aria-label="Remove item ${index + 1}">×</button></td>`;
+        row.querySelector('.desc').value = item.description;
+        row.querySelector('.qty').value = item.qty;
+        row.querySelector('.price').value = item.price;
+        row.querySelectorAll('input').forEach(input => input.addEventListener('input', () => {
+          item.description = row.querySelector('.desc').value; item.qty = row.querySelector('.qty').value; item.price = row.querySelector('.price').value; calculate(); save(false);
+        }));
+        row.querySelector('.remove').addEventListener('click', () => { state.items.splice(index, 1); renderItems(); calculate(); save(); });
+        itemsEl.appendChild(row);
+      });
+    }
+
+    function calculate() {
+      let subtotal = 0;
+      [...itemsEl.rows].forEach((row, i) => {
+        const amount = (Number(state.items[i]?.qty) || 0) * (Number(state.items[i]?.price) || 0);
+        subtotal += amount; row.querySelector('.amount').textContent = money.format(amount);
+      });
+      const rate = Number(document.getElementById('taxRate').value) || 0;
+      const tax = subtotal * rate / 100;
+      document.getElementById('subtotal').textContent = money.format(subtotal);
+      document.getElementById('tax').textContent = money.format(tax);
+      document.getElementById('total').textContent = money.format(subtotal + tax);
+    }
+
+    document.querySelectorAll('[data-save]').forEach(el => el.addEventListener('input', () => { calculate(); save(false); }));
+    document.getElementById('addBtn').addEventListener('click', () => { state.items.push({ description: '', qty: '1', price: '' }); renderItems(); calculate(); save(); itemsEl.lastElementChild.querySelector('.desc').focus(); });
+    document.getElementById('printBtn').addEventListener('click', () => { save(false); window.print(); });
+    document.getElementById('newBtn').addEventListener('click', () => { if (confirm('Start a new invoice? This will replace the current draft.')) { state = freshState(); localStorage.removeItem(STORAGE_KEY); load(); save(); } });
+    window.addEventListener('beforeunload', () => save(false));
+    load();
+  </script>
+</body>
+</html>
