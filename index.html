@@ -53,6 +53,7 @@
     td:first-child { width: 36px; color: var(--muted); text-align: center; }
     td:nth-child(2) { width: 90px; }
     td:nth-child(3) { width: 125px; }
+    td:nth-child(3) input { text-align: right; }
     td:nth-child(4) { width: 125px; font-variant-numeric: tabular-nums; }
     td:last-child { width: 36px; }
     .money-wrap { position: relative; }
@@ -138,7 +139,7 @@
 
       <div class="table-wrap">
         <table aria-label="Invoice items">
-          <thead><tr><th>#</th><th>Description</th><th>Qty</th><th>Unit price</th><th>Amount</th><th></th></tr></thead>
+          <thead><tr><th>#</th><th>Description</th><th>Quantity</th><th>Unit price</th><th>Amount</th><th></th></tr></thead>
           <tbody id="items"></tbody>
         </table>
       </div>
