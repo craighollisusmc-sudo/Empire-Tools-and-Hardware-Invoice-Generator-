@@ -114,7 +114,7 @@
           <div class="company">
             <h2>Empire Tools & Hardware</h2>
             <p>LLC · Built to keep the job moving.</p>
-            <p><input data-save="companyContact" aria-label="Company contact details" value="Phone · Email · Business address"></p>
+            <p><input data-save="companyContact" aria-label="Company contact details" value="Sales@empiretoolsandhardware.com"></p>
           </div>
         </div>
         <div class="invoice-title">
@@ -174,7 +174,7 @@
       return {
         invoiceNumber: `INV-${today.getFullYear()}-${String(Date.now()).slice(-4)}`,
         date: today.toISOString().slice(0, 10), due: due.toISOString().slice(0, 10),
-        taxRate: '8.875', companyContact: 'Phone · Email · Business address', billTo: '', workOrder: '', po: '', supervisor: '', notes: '',
+        taxRate: '8.875', companyContact: 'Sales@empiretoolsandhardware.com', billTo: '', workOrder: '', po: '', supervisor: '', notes: '',
         items: Array.from({ length: 4 }, () => ({ description: '', qty: '1', price: '' }))
       };
     }
@@ -183,6 +183,7 @@
       try { state = { ...freshState(), ...JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') }; }
       catch { state = freshState(); }
       if (!state.items?.length) state.items = freshState().items;
+      if (state.companyContact === 'Phone · Email · Business address') state.companyContact = 'Sales@empiretoolsandhardware.com';
       document.querySelectorAll('[data-save]').forEach(el => el.value = state[el.dataset.save] ?? '');
       renderItems(); calculate();
     }
