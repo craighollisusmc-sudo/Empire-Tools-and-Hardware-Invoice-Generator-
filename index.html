@@ -29,8 +29,7 @@
     .workspace { max-width: 1100px; margin: 32px auto 80px; padding: 0 20px; }
     .invoice { min-height: 1000px; padding: 54px 58px; border-top: 8px solid var(--brand); border-radius: 4px; background: var(--paper); box-shadow: var(--shadow); }
     .header { display: grid; grid-template-columns: 1fr auto; gap: 32px; align-items: start; padding-bottom: 28px; border-bottom: 2px solid var(--ink); }
-    .brand { display: flex; gap: 18px; align-items: center; }
-    .mark { display: grid; width: 58px; height: 58px; place-items: center; border-radius: 50% 50% 44% 44%; color: var(--paper); background: var(--brand); font: 800 25px Georgia, serif; outline: 3px solid var(--accent); outline-offset: 3px; }
+    .brand { display: flex; align-items: center; }
     .company h2 { margin: 0 0 3px; font: 700 clamp(25px, 4vw, 36px)/1 Georgia, serif; letter-spacing: -.02em; }
     .company p { margin: 5px 0 0; color: var(--muted); }
     .invoice-title { text-align: right; }
@@ -92,8 +91,6 @@
       .invoice { min-height: 0; padding: 12px 16px; border-top-width: 3px; box-shadow: none; }
       input, textarea { padding: 1px 2px; border-color: transparent; background: transparent !important; box-shadow: none !important; }
       .header { grid-template-columns: 1fr 190px; gap: 16px; padding-bottom: 9px; border-bottom-width: 1px; }
-      .brand { gap: 10px; }
-      .mark { width: 36px; height: 36px; font-size: 17px; outline-width: 2px; outline-offset: 2px; }
       .company h2 { font-size: 23px; }
       .company p { margin-top: 1px; }
       .invoice-title h3 { font-size: 25px; }
@@ -133,7 +130,6 @@
     <article class="invoice">
       <header class="header">
         <div class="brand">
-          <div class="mark" aria-hidden="true">E</div>
           <div class="company">
             <h2>Empire Tools & Hardware</h2>
             <p>LLC · Built to keep the job moving.</p>
