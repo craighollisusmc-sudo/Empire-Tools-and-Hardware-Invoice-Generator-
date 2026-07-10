@@ -246,9 +246,24 @@
       document.getElementById('total').textContent = money.format(subtotal + tax);
     }
 
+    function safeFilePart(value, fallback) {
+      const cleaned = String(value || '').trim().replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, ' ');
+      return cleaned || fallback;
+    }
+
+    function printInvoice() {
+      save(false);
+      const originalTitle = document.title;
+      const workOrder = safeFilePart(document.getElementById('workOrder').value, 'No Work Order');
+      const po = safeFilePart(document.getElementById('po').value, 'No PO');
+      document.title = `Empire Tools and Hardware - Invoice - ${workOrder} - ${po}`;
+      window.print();
+      setTimeout(() => { document.title = originalTitle; }, 1000);
+    }
+
     document.querySelectorAll('[data-save]').forEach(el => el.addEventListener('input', () => { calculate(); save(false); }));
     document.getElementById('addBtn').addEventListener('click', () => { state.items.push({ description: '', qty: '1', price: '' }); renderItems(); calculate(); save(); itemsEl.lastElementChild.querySelector('.desc').focus(); });
-    document.getElementById('printBtn').addEventListener('click', () => { save(false); window.print(); });
+    document.getElementById('printBtn').addEventListener('click', printInvoice);
     document.getElementById('newBtn').addEventListener('click', () => { if (confirm('Start a new invoice? This will replace the current draft.')) { state = freshState(); localStorage.removeItem(STORAGE_KEY); load(); save(); } });
     window.addEventListener('beforeunload', () => save(false));
     load();
